@@ -1,163 +1,252 @@
+"""
+    Primera Refactorización por Karev:
+    — Se agregó la clase 'Item' para crear los productos
+    — Se añadieron muchos bloques de control de errores (try/except)
+    — Se modificó la lógica de las funciones buscar, mostrar, modificar, ordenar y eliminar
+    — Se agregó la función 'buscar' para evitar repetir bloques de código en otras funciones
+    — Se modificó el estilo visual del menú principal y de algunas funciones
+"""
+
+import os
+from datetime import datetime, timedelta
+
+#Hecho por Karev: clase para los productos de la tienda
+class Item:
+    def __init__(self, nombre: str, id: int, descripcion: str, precio: float, lote: str, fecha_caducidad: str):
+        self.nombre = nombre
+        self.id = id
+        self.desc = descripcion
+        self.precio = precio
+        self.lote = lote
+        self.fechaCad = fecha_caducidad
+        self.cantidad = 999
+    
+    def __str__(self):
+        return f"({self.id}) - Producto: {self.nombre} | '{self.desc}'\
+                \n | Precio: {self.precio} | Lote y fecha de caducidad: {self.lote}, {self.fechaCad}\
+                \n | Cantidad disponible: {self.cantidad} |\n | "
+
 # Lista de productos
 productos = []
+
 # Función por Pedro
 def ingresar():
-    print("===== INGRESAR PRODUCTO =====")
-    id_producto = input("ID del producto: ")
+    print("=====/ INGRESAR PRODUCTO \\=====")
+    try:
+        id_producto = int(input("Ingresa el ID del nuevo producto: "))
+        nombre = input("Ingresa el nombre del producto: ")
+        precio = float(input("Ingresa el precio del producto: "))
+        desc = input("Descripción: ")
+        lote = input("Lote: ")
+        fechaInput = input("Fecha de Caducidad (DDMMAAAA): ")
+        
+    except ValueError: #esta nueva excepción detecta errores para el ID y para el precio
+        print("ERROR!: Ingresaste uno o más valores erroneos. Inténtalo de nuevo.")
 
-    # Agregado por javier valida id duplicado
-    for p in productos:
-        if p['id'] == id_producto:
-            print("¡Error! Ese ID ya existe.")
+    else:
+        # Agregado por javier valida id duplicado
+        if buscar(id_producto): 
+            print(f"ERROR! Ya existe un producto de ID {id_producto}. Inténtalo de nuevo.")
             return
+        
+        # Hecho por Karev, para validar fecha 
+        if fechaInput == int(fechaInput) or fechaInput == f"0{int(fechaInput)}":
+            fechaCad = f"{fechaInput[:2]}/{fechaInput[2:4]}/{fechaInput[4:]}"
 
-    nombre = input("Nombre: ")
+        else:
+            fechaNoFormat = datetime.now().date() + timedelta(weeks=8)
+            fechaCad = fechaNoFormat.strftime("%d/%m/%Y")
+            # ^^^ si ingresó una fecha erronea, se establecerá una fecha
+            #     de caducidad default de 2 meses
 
-    # Agregado por javier evita que el programa falle si no es número
-    while True:
-        try:
-            precio = float(input("Precio: "))
-            break
-        except ValueError:
-            print("Error: Por favor ingrese un número válido para el precio.")
-
-    descripcion = input("Descripción: ")
-    lote = input("Lote: ")
-    fecha_caducidad = input("Fecha de Caducidad (DD/MM/AAAA): ")
-
-    producto = {
-        'id': id_producto,
-        'nombre': nombre,
-        'precio': precio,
-        'descripcion': descripcion,
-        'lote': lote,
-        'fecha_caducidad': fecha_caducidad
-    }
-    
-    productos.append(producto)
-    
-    print("\n✓ Producto ingresado exitosamente!")
+        productos.append(Item(nombre, id_producto, desc, precio, lote, fechaCad))
+        
+        print("\nProducto registrado exitosamente!")
 
 # Función por Pedro
 def mostrar():
-    print("===== LISTA DE PRODUCTOS =====")
-    if len(productos) == 0:
-        print("No hay productos registrados.")
-        print("|====================|\n")
+    print("MOSTRAR")
+    print("=====/ LISTA DE PRODUCTOS \\=====")
+    if not productos:
+        print("\nNo hay productos registrados.\n")
         return
     
     for i, prod in enumerate(productos, 1):
-        print(f"\n--- Producto {i} ---")
-        print(f"ID: {prod['id']}")
-        print(f"Nombre: {prod['nombre']}")
-        print(f"Precio: ${prod['precio']:.2f}")
-        print(f"Descripción: {prod['descripcion']}")
-        print(f"Lote: {prod['lote']}")
-        print(f"Fecha de Caducidad: {prod['fecha_caducidad']}")
+        print(f"\n--- Producto {i} ---\
+              \n{prod}")
     
-    print(f"\nTotal de productos: {len(productos)}")
+    print(f"\n\nTotal de productos: {len(productos)}")
 
-# funcion por Danny  
+# Función por Karev
+def buscar(id: int):
+    if not productos: return None
+
+    for p in productos:
+        if p.id == id:
+            return p
+    return None
+
+# Funcion por Danny  
 def borrar():
-    print("borrar")
-    print("borrar producto")
-
+    print("BORRAR")
     if len(productos) == 0:
-        print("No hay productos para borrar.")
+        print("\nNo hay productos registrados\n")
         return
     
-    id_borrar = input("Ingrese el ID del producto a borrar: ")
+    try:
+        id_borrar = int(input("Ingrese el ID del producto a borrar: "))
+
+    except ValueError:
+        print("ERROR! Tipo de dato para 'Product_ID' incorrecto")
     
-    # Borrar producto por ID
-    for i, prod in enumerate(productos):
-        if prod['id'] == id_borrar:
-            del productos[i]
-            print(f"✓ Producto con ID {id_borrar} borrado exitosamente.")
-            return
-       
-    print("✗ Producto no encontrado.")  # correccion por javier
+    else:
+        # Borrar producto por ID
+        itemBorrar = buscar(id_borrar)
+        if itemBorrar:
+            productos.remove(itemBorrar)
+
+            print(f"\n  ✓ Producto con ID {id_borrar} borrado exitosamente.")
+        else:
+            print(f"ERROR!: No se encontró un producto con ID {id_borrar}.")  # correccion por javier
   
 # Función por Pavel
 def modificar():
     print("MODIFICAR")
+
     if len(productos) == 0:
         print("No hay productos registrados.")
         return
     
-    id_buscar = input("Ingrese el ID del producto a modificar: ")
+    try:
+        id_buscar = int(input("Ingrese el ID del producto a modificar: "))
     
-    for prod in productos:
-        if prod['id'] == id_buscar:
+    except ValueError:
+        print("ERROR! Tipo de dato para 'Product_ID' incorrecto")
+    
+    else:
+        prodModificar = buscar(id_buscar)
+        if prodModificar:
             print("\nProducto encontrado. Deje vacío cualquier campo para NO modificarlo.\n")
             
-            nuevo_nombre = input(f"Nombre ({prod['nombre']}): ")
-            nuevo_precio = input(f"Precio ({prod['precio']}): ")
-            nueva_desc = input(f"Descripción ({prod['descripcion']}): ")
-            nuevo_lote = input(f"Lote ({prod['lote']}): ")
-            nueva_fecha = input(f"Fecha de Caducidad ({prod['fecha_caducidad']}): ")
-            
-            if nuevo_nombre != "":
-                prod['nombre'] = nuevo_nombre
-            if nuevo_precio != "":
+            nuevo_nombre = input(f"Nuevo nombre: ")
+            nuevo_precio = input(f"Nuevo precio: ")
+            nueva_desc = input(f"Nueva descripción: ")
+            nuevo_lote = input(f"Nuevo lote: ")
+            nueva_fecha_input = input(f"Nueva fecha de caducidad (DDMMAAAA): ")
+
+            if nuevo_precio:
                 try:
-                    prod['precio'] = float(nuevo_precio)
-                except:
-                    print("Precio inválido. Se mantiene el valor anterior.")
-            if nueva_desc != "":
-                prod['descripcion'] = nueva_desc
-            if nuevo_lote != "":
-                prod['lote'] = nuevo_lote
-            if nueva_fecha != "":
-                prod['fecha_caducidad'] = nueva_fecha
+                    nuevo_precio = float(nuevo_precio)
+
+                except ValueError:
+                    print("ERROR! Tipo de dato para 'Product_Price' incorrecto.")
+                    return
+                
+                else:
+                    prodModificar.precio = nuevo_precio
+
+            if nueva_fecha_input:
+                try:
+                    nueva_fecha_try = int(nueva_fecha_input)
+
+                except ValueError:
+                    print("ERROR! Tipo de dato para 'Product_ExpDate' incorrecto.")
+                
+                else:
+                    if nueva_fecha_input == int(nueva_fecha_input) or nueva_fecha_input == f"0{nueva_fecha_input}":
+                        nueva_fecha = f"{nueva_fecha_input[:2]}/{nueva_fecha_input[2:4]}/{nueva_fecha_input[4:]}"
+                    else:
+                        nueva_fecha_NoFormat = datetime.now().date() + timedelta(weeks=8)
+                        nueva_fecha = nueva_fecha_NoFormat.strftime("%d/%m/%Y")
+
+                    prodModificar.fechaCad = nueva_fecha
+
+            if nuevo_nombre:
+                prodModificar.nombre = nuevo_nombre
+            if nueva_desc:
+                prodModificar.desc = nueva_desc
+            if nuevo_lote:
+                prodModificar.lote = nuevo_lote
             
-            print("\nProducto modificado exitosamente!")
+            print("\n   Producto modificado exitosamente!")
             return
 
-    print("No se encontró un producto con ese ID.")
+        else:
+            print(f"ERROR!: No se encontró un producto con ID {id_buscar}.")
 
+# Función también por Danny
 def ordenar():
     print("ORDENAR")
-    print("ordenar productos por ID")
 
     if len(productos) == 0:
-        print("No hay productos para ordenar.")
+        print("No hay productos registrados.")
         return
     
     # usamos metodo burbuja
-    for i in range(len(productos)-1):
-        for j in range(len(productos)-1-i):
-            if productos[j]['id'] > productos[j+1]['id']:
-                # intercambiar productos
-                productos[j],productos[j+1] = productos[j+1],productos[j]
-    print("✓ Productos ordenados por ID exitosamente.")
+    productosOrd = productos
 
-opc = 1 # variable de control de opciones
+    for i in range(len(productosOrd)):
+        for j in range(len(productosOrd)-1):
+            if productosOrd[j].id > productosOrd[j+1].id: # intercambiamos orden de los productos
+                productosOrd[j], productosOrd[j+1] = productosOrd[j+1], productosOrd[j]
+        
+    print("=====/ LISTA DE PRODUCTOS (ordenados) \\=====")
+    for p in productosOrd: print(p)
 
-while opc!=0: #menú por Orión
-    print("|====================|")
-    print("===== MENU =====")
-    print("0. Salir")
-    print("1. Ingresar Producto")
-    print("2. Mostrar")
-    print("3. Modificar lo ingresado")
-    print("4. Ordenar")
-    print("5. Borrar")
-    opc = int(input("----> "))
-    print("|====================|")
-    print("-----> OPCION: ", opc," <-----")
 
-    match opc:
-        case 0:
-            print("-----> SALIENDO <-----")
-        case 1:
-            ingresar()
-        case 2:
-            mostrar()
-        case 3:
-            modificar()
-        case 4:
-            ordenar()
-        case 5:
-            borrar()
-        case _:
-            print("-----> OPCION NO DISPONIBLE <-----")
+#Función por Karev: limpiar pantalla
+def clear():
+    return os.system("cls" if os.name == "nt" else "clear")
+
+
+        # ------------------ FUNCION MAIN ------------------ # 
+def Main():
+    opc = 1 # variable de control de opciones
+
+    clear()
+    while opc!=0: #menú por Orión
+        print("|====================|")
+        print("===== MENU =====\
+              \n1. Ingresar Producto\
+              \n2. Mostrar\
+              \n3. Modificar lo ingresado\
+              \n4. Ordenar\
+              \n5. Borrar\
+              \n0. Salir")
+        
+        try:
+            opc = int(input(" \n----> "))
+
+        except ValueError:
+            clear()
+            print("|====================|\n")
+            print("ERROR! Tipo de dato incorrecto. Inténtalo de nuevo.\n")
+
+        else:
+            print("|====================|")
+            print(f"-----> OPCIÓN {opc} <-----")
+
+            match opc:
+                case 1:
+                    ingresar()
+
+                case 2:
+                    mostrar()
+
+                case 3:
+                    modificar()
+
+                case 4:
+                    ordenar()
+
+                case 5:
+                    borrar()
+
+                case 0:
+                    print("-----> SALIENDO <-----")
+
+                case _:
+                    print("-----> OPCION NO DISPONIBLE <-----")
+
+if __name__ == '__main__':
+    Main()
