@@ -1,10 +1,8 @@
 """
-    Primera Refactorización por Karev:
-    — Se agregó la clase 'Item' para crear los productos
-    — Se añadieron muchos bloques de control de errores (try/except)
-    — Se modificó la lógica de las funciones buscar, mostrar, modificar, ordenar y eliminar
-    — Se agregó la función 'buscar' para evitar repetir bloques de código en otras funciones
-    — Se modificó el estilo visual del menú principal y de algunas funciones
+    Segunda Refactorización por Karev:
+    — Se arregló el bug de la validación de fechas (ingresar() y modificar())
+    — Se modificó el método de copiado de la lista de productos en ordenar()
+    — Cambios en el UX
 """
 
 import os
@@ -24,7 +22,7 @@ class Item:
     def __str__(self):
         return f"({self.id}) - Producto: {self.nombre} | '{self.desc}'\
                 \n | Precio: {self.precio} | Lote y fecha de caducidad: {self.lote}, {self.fechaCad}\
-                \n | Cantidad disponible: {self.cantidad} |\n | "
+                \n | Stock disponible: {self.cantidad} |\n | "
 
 # Lista de productos
 productos = []
@@ -50,7 +48,7 @@ def ingresar():
             return
         
         # Hecho por Karev, para validar fecha 
-        if fechaInput == int(fechaInput) or fechaInput == f"0{int(fechaInput)}":
+        if fechaInput.isdigit() and len(fechaInput) == 8:
             fechaCad = f"{fechaInput[:2]}/{fechaInput[2:4]}/{fechaInput[4:]}"
 
         else:
@@ -153,7 +151,7 @@ def modificar():
                     print("ERROR! Tipo de dato para 'Product_ExpDate' incorrecto.")
                 
                 else:
-                    if nueva_fecha_input == int(nueva_fecha_input) or nueva_fecha_input == f"0{nueva_fecha_input}":
+                    if nueva_fecha_input.isdigit() and len(nueva_fecha_input) == 8:
                         nueva_fecha = f"{nueva_fecha_input[:2]}/{nueva_fecha_input[2:4]}/{nueva_fecha_input[4:]}"
                     else:
                         nueva_fecha_NoFormat = datetime.now().date() + timedelta(weeks=8)
@@ -182,9 +180,10 @@ def ordenar():
         print("No hay productos registrados.")
         return
     
-    # usamos metodo burbuja
-    productosOrd = productos
+    # creamos una copia de la lista original para no modificar esta misma
+    productosOrd = productos.copy()
 
+    # usamos metodo burbuja
     for i in range(len(productosOrd)):
         for j in range(len(productosOrd)-1):
             if productosOrd[j].id > productosOrd[j+1].id: # intercambiamos orden de los productos
@@ -215,7 +214,7 @@ def Main():
               \n0. Salir")
         
         try:
-            opc = int(input(" \n----> "))
+            opc = int(input(" \n    --> "))
 
         except ValueError:
             clear()
