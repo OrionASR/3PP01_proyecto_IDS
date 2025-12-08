@@ -81,6 +81,35 @@ def buscar(id: int):
             return p
     return None
 
+# Funcion para Buscar por nombre por Antonio
+def buscar_nombre():
+    print("\n=====/ BUSCAR POR NOMBRE \\=====")
+
+    nombre_buscar = input("Ingresa el nombre del producto: ").strip().lower()
+
+    encontrados = []
+    for p in productos:
+        if nombre_buscar in p.nombre.lower():
+            encontrados.append(p)
+
+    if not encontrados:
+        print("\nNo se encontraron productos con ese nombre.\n")
+        return
+
+    print(f"\n✓ Se encontraron {len(encontrados)} producto(s):\n")
+    print("="*60)
+    for i, item in enumerate(encontrados, 1):
+        print(f"\n🔹 Resultado {i}:")
+        print(f"   ID:          {item.id}")
+        print(f"   Nombre:      {item.nombre}")
+        print(f"   Precio:      ${item.precio:.2f}")
+        print(f"   Descripción: {item.desc}")
+        print(f"   Lote:        {item.lote}")
+        print(f"   Caducidad:   {item.fechaCad}")
+        print(f"   Stock:       {item.cantidad} unidades")
+        print("-"*60)
+    print()
+
 # Funcion por Danny  
 def borrar():
     print("BORRAR")
@@ -208,6 +237,7 @@ def Main():
               \n3. Modificar lo ingresado\
               \n4. Ordenar\
               \n5. Borrar\
+              \n6. Buscar por nombre\
               \n0. Salir")
         
         try:
@@ -237,6 +267,9 @@ def Main():
 
                 case 5:
                     borrar()
+
+                case 6:
+                    buscar_nombre()    
 
                 case 0:
                     print("-----> SALIENDO <-----")
