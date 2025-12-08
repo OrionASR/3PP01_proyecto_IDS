@@ -1,8 +1,5 @@
 """
-    Segunda Refactorización por Karev:
-    — Se arregló el bug de la validación de fechas (ingresar() y modificar())
-    — Se modificó el método de copiado de la lista de productos en ordenar()
-    — Cambios en el UX
+    No te vayas a cansar fer nmms
 """
 
 import os
