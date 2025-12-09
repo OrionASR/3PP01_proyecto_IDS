@@ -177,7 +177,58 @@ def filtrado():
 
 def ordenar():
     print("Función ordenar en Rubros.py")
+clear()
+    print("|====================|")
+    print("====== ORDENAR PRODUCTOS ======")
+    
+    if not productos:
+        print("No hay productos cargados para ordenar. ")
+        input("\nPresiona Enter para continuar...")
+        return
+        
+    opc_criterio = 0
+    while opc_criterio not in [1, 2]:
+        print("\nOrdenar por:")
+        print("1. Nombre (Alfabético) ")
+        print("2. Precio (Numérico) ")
+        try:
+            opc_criterio = int(input("\n--> Selecciona el criterio de ordenación: "))
+        except ValueError:
+            print("\nERROR: Debes ingresar un número (1 o 2). ")
+            
+    if opc_criterio == 0:
+        return
 
+    opc_sentido = 0
+    while opc_sentido not in [1, 2]:
+        print("\nSentido de la ordenación:")
+        print("1. Ascendente (A-Z, Menor a Mayor) ")
+        print("2. Descendente (Z-A, Mayor a Menor) ")
+        try:
+            opc_sentido = int(input("\n--> Selecciona el sentido: "))
+        except ValueError:
+            print("\nERROR: Debes ingresar un número (1 o 2). ")
+
+    # Definir la clave (key) y el sentido (reverse)
+    criterio = "nombre" if opc_criterio == 1 else "precio"
+    sentido_descendente = (opc_sentido == 2)
+    
+    # Ordenar la lista global 'productos' in-place. 
+    # Usamos getattr para acceder dinámicamente al atributo (nombre o precio).
+    try:
+        productos.sort(key=lambda p: getattr(p, criterio), reverse=sentido_descendente)
+        print("\n✅ ¡Productos ordenados! Mostrando el resultado:\n")
+        
+        for item in productos:
+            try:
+                print(item) 
+            except:
+                print(f"{item.nombre} - ${item.precio}")
+                
+    except AttributeError:
+        print(f"\nERROR: Los objetos 'Item' no tienen el atributo '{criterio}'. Asegúrate de que tu clase 'Item' lo tenga. 😥")
+        
+    input("\nPresiona Enter para continuar...")
 
 def borrar():
     print("Función borrar en Rubros.py")
