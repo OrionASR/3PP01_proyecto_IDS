@@ -1,5 +1,5 @@
 # ---------- Parte 2: Lógica de borrado / manipulación de datos ----------
-# --- Responsable: Integrante B ---
+# --- Responsable: fernanda ---
 
 def borrar_por_rubro_logic(productos, opcion, valor_str):
     """
