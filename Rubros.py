@@ -1,273 +1,286 @@
+# ===========================
+#  Restruturado por Simmel y Juan Isaac
+# ===========================
+
 import os
 from modelos import Item, productos
-from datetime import datetime
 
+
+# ---------------------------
+# FUNCIONES BÁSICAS
+# ---------------------------
 def clear():
     os.system("cls" if os.name == "nt" else "clear")
-# 1. Función para filtrar por Precio leonel
+
+def pausa():
+    input("\nPresiona ENTER para continuar...")
+
+
+# ===========================
+#   2.1 FILTRADO
+# ===========================
+
+# -------- LEONEL: FILTRAR POR PRECIO --------
 def filtrar_por_precio():
     clear()
-    print("|====================|")
-    print("=== FILTRAR POR PRECIO ===")
+    print("=== FILTRAR POR PRECIO (LEONEL) ===")
 
-    # Validación de entrada
     try:
-        min_precio = float(input("Ingrese el precio mínimo: "))
-        max_precio = float(input("Ingrese el precio máximo: "))
-    except ValueError:
-        print("\nERROR: Debes ingresar valores numéricos.")
-        input("Presiona Enter para volver...")
-        return
-    
-    print(f"\nBuscando productos entre ${min_precio} y ${max_precio}...\n")
-
-    # Validación: productos existente
-    if not productos:
-        print("No hay productos cargados para filtrar.")
-        input("\nPresiona Enter para continuar...")
+        minimo = float(input("Precio mínimo: "))
+        maximo = float(input("Precio máximo: "))
+    except:
+        print("ERROR: introduce números válidos.")
+        pausa()
         return
 
-    encontrados = [p for p in productos if min_precio <= p.precio <= max_precio]
-    if encontrados:
-        print(f"Se encontraron {len(encontrados)} coincidencias:\n")
-        for item in encontrados:
-            try:
-                print(item) 
-            except:
-                print(f"{item.nombre} - ${item.precio}")
-    else:
-        print("No hay productos en ese rango de precios.")
+    print("\nProductos encontrados:\n")
+    for p in productos:
+        if p.precio >= minimo and p.precio <= maximo:
+            print(p)
 
-    input("\nPresiona Enter para continuar...")
+    pausa()
 
-# 2. Función para filtrar por ID (coincidencia exacta)
+
+# -------- SIMMEL: FILTRAR POR ID --------
 def filtrar_por_id():
     clear()
-    print("|====================|")
     print("=== FILTRAR POR ID ===")
 
-    # Validación de entrada
     try:
-        id_buscar = int(input("Ingrese el ID del producto: "))
-    except ValueError:
-        print("\nERROR: Debes ingresar un valor numérico entero.")
-        input("Presiona Enter para volver...")
-        return
-    
-    print(f"\nBuscando producto con ID {id_buscar}...\n")
-
-    # Validación: productos existente
-    if not productos:
-        print("No hay productos cargados para filtrar.")
-        input("\nPresiona Enter para continuar...")
+        buscar = int(input("Ingresa el ID: "))
+    except:
+        print("ERROR: ID inválido.")
+        pausa()
         return
 
-    encontrado = None
+    encontrado = False
     for p in productos:
-        if p.id == id_buscar:
-            encontrado = p
+        if p.id == buscar:
+            print("\nProducto encontrado:\n")
+            print(p)
+            encontrado = True
             break
-    
-    if encontrado:
-        print("✓ Producto encontrado:\n")
-        try:
-            print(encontrado) 
-        except:
-            print(f"ID: {encontrado.id} - {encontrado.nombre} - ${encontrado.precio}")
-    else:
-        print(f"No se encontró ningún producto con ID {id_buscar}.")
 
-    input("\nPresiona Enter para continuar...")
+    if not encontrado:
+        print("\nNo se encontró un producto con ese ID.")
 
-# 3. Función para filtrar por Fecha de Caducidad Omar
+    pausa()
+
+
+# -------- OMAR: FILTRAR POR FECHA --------
+# Formato esperado: DD/MM/AAAA
 def filtrar_por_fecha():
     clear()
-    print("|====================|")
-    print("=== FILTRAR POR FECHA DE CADUCIDAD ===")
+    print("=== FILTRAR POR FECHA (OMAR) ===")
+    print("Formato: DD/MM/AAAA\n")
 
-    print("Ingresa las fechas en formato DDMMAAAA")
-    
-    try:
-        fecha_min_input = input("Fecha mínima (DDMMAAAA): ")
-        fecha_max_input = input("Fecha máxima (DDMMAAAA): ")
-        
-        # Validar formato
-        if not (fecha_min_input.isdigit() and len(fecha_min_input) == 8):
-            raise ValueError("Formato de fecha mínima inválido")
-        if not (fecha_max_input.isdigit() and len(fecha_max_input) == 8):
-            raise ValueError("Formato de fecha máxima inválido")
-        
-        # Convertir a objetos datetime para comparación
-        fecha_min = datetime.strptime(fecha_min_input, "%d%m%Y")
-        fecha_max = datetime.strptime(fecha_max_input, "%d%m%Y")
-        
-    except ValueError as e:
-        print(f"\nERROR: {e}")
-        print("Asegúrate de ingresar fechas válidas en formato DDMMAAAA")
-        input("Presiona Enter para volver...")
-        return
-    
-    print(f"\nBuscando productos con caducidad entre {fecha_min.strftime('%d/%m/%Y')} y {fecha_max.strftime('%d/%m/%Y')}...\n")
+    fecha_min = input("Fecha mínima: ").strip()
+    fecha_max = input("Fecha máxima: ").strip()
 
-    # Validación: productos existente
-    if not productos:
-        print("No hay productos cargados para filtrar.")
-        input("\nPresiona Enter para continuar...")
-        return
-
-    encontrados = []
+    print("\nProductos encontrados:\n")
     for p in productos:
-        try:
-            # Convertir la fecha del producto (formato DD/MM/YYYY) a datetime
-            fecha_prod = datetime.strptime(p.fechaCad, "%d/%m/%Y")
-            if fecha_min <= fecha_prod <= fecha_max:
-                encontrados.append(p)
-        except ValueError:
-            # Si hay error al convertir fecha, ignorar ese producto
-            continue
-    
-    if encontrados:
-        print(f"Se encontraron {len(encontrados)} coincidencias:\n")
-        for item in encontrados:
-            try:
-                print(item) 
-            except:
-                print(f"{item.nombre} - Caducidad: {item.fechaCad}")
-    else:
-        print("No hay productos en ese rango de fechas.")
+        fecha = p.fechaCad.strip()
+        if fecha >= fecha_min and fecha <= fecha_max:
+            print(p)
 
-    input("\nPresiona Enter para continuar...")
+    pausa()
 
-def filtrado():
-    opc = 1
-    clear()
 
-    while opc != 0:
-        print("|====================|")
+# -------- SIMMEL: MENÚ FILTRADO --------
+def filtrado_menu():
+    opcion = -1
+    while opcion != 0:
+        clear()
         print("===== MENÚ FILTRADO =====")
-        print("1. Por Precio")
-        print("2. Por ID de Producto")
-        print("3. Por Fecha de Caducidad")
-        print("0. Volver al Menú Principal")
+        print("1. Filtrar por Precio (Leonel)")
+        print("2. Filtrar por ID")
+        print("3. Filtrar por Fecha (Omar)")
+        print("0. Regresar")
 
         try:
-            opc = int(input("\n--> Selecciona una opción: "))
-        except ValueError:
-            clear()
-            print("|====================|")
-            print("ERROR: Debes ingresar un número.\n")
-            continue
+            opcion = int(input("\n--> "))
+        except:
+            opcion = -1
+
+        if opcion == 1:
+            filtrar_por_precio()
+        elif opcion == 2:
+            filtrar_por_id()
+        elif opcion == 3:
+            filtrar_por_fecha()
+        elif opcion == 0:
+            return
+        else:
+            print("Opción inválida.")
+            pausa()
+
+
+# ===========================
+#   2.2 ORDENAR (JUAN ISAAC, YULIX, SANCHEZ)
+# ===========================
+#  ORDENAR POR ID sanchez
+def ordenar_por_id():
+    productos.sort(key=lambda p: p.id)
+    print("\nProductos ordenados por ID:\n")
+    for p in productos: print(p)
+
+
+#  ORDENAR POR ID JUAN ISAAC
+def ordenar_por_fecha():
+    productos.sort(key=lambda p: p.fechaCad)
+    print("\nProductos ordenados por Fecha:\n")
+    for p in productos: print(p)
+
+#  ORDENAR POR ID YULIX
+def ordenar_por_precio():
+    productos.sort(key=lambda p: p.precio)
+    print("\nProductos ordenados por Precio:\n")
+    for p in productos: print(p)
+
+
+# -------- JUAN ISAAC: MENÚ ORDENAR --------
+def ordenar_menu():
+    opcion = -1
+    while opcion != 0:
+        clear()
+        print("===== ORDENAR (Juan isaac) =====")
+        print("1. Ordenar por ID")
+        print("2. Ordenar por Fecha de Caducidad")
+        print("3. Ordenar por Precio")
+        print("0. Regresar")
+
+        try:
+            opcion = int(input("\n--> "))
+        except:
+            opcion = -1
 
         clear()
-        print("|====================|")
-        print(f"-----> OPCIÓN {opc} <-----\n")
 
-        match opc:
-            case 1:
-                filtrar_por_precio()
-            case 2:
-                filtrar_por_id()
-            case 3:
-                filtrar_por_fecha()
-            case 0:
-                print("-----> VOLVIENDO AL MENÚ PRINCIPAL <-----")
-            case _:
-                print("-----> OPCIÓN NO DISPONIBLE <-----")
+        if opcion == 1:
+            ordenar_por_id()
+        elif opcion == 2:
+            ordenar_por_fecha()
+        elif opcion == 3:
+            ordenar_por_precio()
+        elif opcion == 0:
+            return
+        else:
+            print("Opción inválida.")
 
-
-def ordenar():
-    print("Función ordenar en Rubros.py")
-clear()
-    print("|====================|")
-    print("====== ORDENAR PRODUCTOS ======")
-    
-    if not productos:
-        print("No hay productos cargados para ordenar. ")
-        input("\nPresiona Enter para continuar...")
-        return
-        
-    opc_criterio = 0
-    while opc_criterio not in [1, 2]:
-        print("\nOrdenar por:")
-        print("1. Nombre (Alfabético) ")
-        print("2. Precio (Numérico) ")
-        try:
-            opc_criterio = int(input("\n--> Selecciona el criterio de ordenación: "))
-        except ValueError:
-            print("\nERROR: Debes ingresar un número (1 o 2). ")
-            
-    if opc_criterio == 0:
-        return
-
-    opc_sentido = 0
-    while opc_sentido not in [1, 2]:
-        print("\nSentido de la ordenación:")
-        print("1. Ascendente (A-Z, Menor a Mayor) ")
-        print("2. Descendente (Z-A, Mayor a Menor) ")
-        try:
-            opc_sentido = int(input("\n--> Selecciona el sentido: "))
-        except ValueError:
-            print("\nERROR: Debes ingresar un número (1 o 2). ")
-
-    # Definir la clave (key) y el sentido (reverse)
-    criterio = "nombre" if opc_criterio == 1 else "precio"
-    sentido_descendente = (opc_sentido == 2)
-    
-    # Ordenar la lista global 'productos' in-place. 
-    # Usamos getattr para acceder dinámicamente al atributo (nombre o precio).
-    try:
-        productos.sort(key=lambda p: getattr(p, criterio), reverse=sentido_descendente)
-        print("\n✅ ¡Productos ordenados! Mostrando el resultado:\n")
-        
-        for item in productos:
-            try:
-                print(item) 
-            except:
-                print(f"{item.nombre} - ${item.precio}")
-                
-    except AttributeError:
-        print(f"\nERROR: Los objetos 'Item' no tienen el atributo '{criterio}'. Asegúrate de que tu clase 'Item' lo tenga. 😥")
-        
-    input("\nPresiona Enter para continuar...")
-
-def borrar():
-    print("Función borrar en Rubros.py")
+        pausa()
 
 
-def Rubros_menu():
-    opc = 1
+# ===========================
+#   2.3 BORRAR (SANCHES, GERMAN, FERNANDA)
+# ===========================
+
+# -------- GERMAN: BORRAR POR ID --------
+def borrar_por_id():
     clear()
+    print("=== BORRAR POR ID ===")
+    try:
+        bus = int(input("ID a borrar: "))
+    except:
+        print("ID inválido.")
+        pausa()
+        return
 
-    while opc != 0:
-        print("|====================|")
-        print("===== MENU =====")
+    for p in productos:
+        if p.id == bus:
+            productos.remove(p)
+            print("\nProducto borrado.")
+            pausa()
+            return
+
+    print("\nProducto no encontrado.")
+    pausa()
+
+
+# -------- SANCHEZ BORRAR POR PRECIO --------
+def borrar_por_precio():
+    clear()
+    print("=== BORRAR POR PRECIO ===")
+    try:
+        limite = float(input("Borrar productos con precio menor a: "))
+    except:
+        print("Valor inválido.")
+        pausa()
+        return
+
+    productos[:] = [p for p in productos if p.precio >= limite]
+    print("\nProductos eliminados.")
+    pausa()
+
+
+# -------- FERNANDA BORRAR POR FECHA --------
+def borrar_por_fecha():
+    clear()
+    print("=== BORRAR POR FECHA ===")
+    fecha = input("Fecha exacta (DD/MM/AAAA): ")
+
+    productos[:] = [p for p in productos if p.fechaCad.strip() != fecha]
+    print("\nProductos eliminados.")
+    pausa()
+
+
+# -------- GERMAN MENÚ BORRAR --------
+def borrar_menu():
+    opcion = -1
+    while opcion != 0:
+        clear()
+        print("===== BORRAR =====")
+        print("1. Borrar por ID")
+        print("2. Borrar por Precio")
+        print("3. Borrar por Fecha")
+        print("0. Regresar")
+
+        try:
+            opcion = int(input("\n--> "))
+        except:
+            opcion = -1
+
+        if opcion == 1:
+            borrar_por_id()
+        elif opcion == 2:
+            borrar_por_precio()
+        elif opcion == 3:
+            borrar_por_fecha()
+        elif opcion == 0:
+            return
+        else:
+            print("Opción inválida.")
+            pausa()
+
+
+# ===========================
+#   MENÚ PRINCIPAL RUBROS (SIMMEL)
+# ===========================
+def Rubros_menu():
+    opcion = -1
+    while opcion != 0:
+        clear()
+        print("===== RUBROS =====")
         print("1. Filtrado")
-        print("2. Ordenar")
+        print("2. Ordenar (Fafa)")
         print("3. Borrar")
         print("0. Salir")
 
         try:
-            opc = int(input("\n--> "))
-        except ValueError:
+            opcion = int(input("\n--> "))
+        except:
+            opcion = -1
+
+        if opcion == 1:
+            filtrado_menu()
+        elif opcion == 2:
+            ordenar_menu()
+        elif opcion == 3:
+            borrar_menu()
+        elif opcion == 0:
             clear()
-            print("|====================|")
-            print("ERROR: Debes ingresar un número.\n")
-            continue
-
-        clear()
-        print("|====================|")
-        print(f"-----> OPCIÓN {opc} <-----\n")
-
-        match opc:
-            case 1:
-                filtrado()
-            case 2:
-                ordenar()
-            case 3:
-                borrar()
-            case 0:
-                print("-----> SALIENDO <-----")
-            case _:
-                print("-----> OPCIÓN NO DISPONIBLE <-----")
-
-
+            print("Saliendo de Rubros...")
+            pausa()
+            return
+        else:
+            print("Opción inválida.")
+            pausa()
