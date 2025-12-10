@@ -16,3 +16,32 @@ class Item:
 
 # Lista de productos
 productos = []
+
+#Desarrollado por Marco Ortega
+class venta:
+    def __init__(self, id_venta: int, items_vendidos: dict):
+       
+        self.id_venta = id_venta
+        self.items_vendidos = items_vendidos 
+
+    def obtener_total(self):
+        total = 0 
+        for item in self.items_vendidos:
+            total += item.precio * self.items_vendidos[item]
+        return total
+    
+    def obtenerSubtotales(self):
+        subtotales = {}
+        for item in self.items_vendidos:
+            subtotales[item] = item.precio * self.items_vendidos[item]
+        return subtotales
+
+# Lista de ventas
+ventas = []
+
+#Funciones para interactuar con la listas de ventas
+def agregar_venta(venta_nueva: venta):
+    ventas.append(venta_nueva)
+
+def obtener_ventas():
+    return ventas
