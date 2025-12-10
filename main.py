@@ -201,6 +201,59 @@ def ordenar():
     print("=====/ LISTA DE PRODUCTOS (ordenados) \\=====")
     for p in productosOrd: print(p)
 
+#Funcion Nicio
+def vender_producto():
+    print("\n=====/ SIMULACIÓN DE VENTA \\=====")
+    
+    if not productos:
+        print("ERROR: No hay productos en stock para vender.")
+        return
+
+    try:
+        # 1. Pedir ID del producto
+        id_venta = int(input("Ingrese el ID del producto a vender: "))
+    except ValueError:
+        print("ERROR: El ID debe ser un número entero.")
+        return
+
+    # Buscar el producto
+    item_a_vender = buscar(id_venta)
+    
+    if not item_a_vender:
+        print(f"ERROR: No se encontró un producto con ID {id_venta}.")
+        return
+
+    # Mostrar stock actual y pedir cantidad
+    print(f"\nProducto: {item_a_vender.nombre} | Stock actual: {item_a_vender.cantidad}")
+    
+    try:
+        # 2. Pedir Cantidad a vender
+        cantidad_a_vender = int(input("Ingrese la cantidad a vender: "))
+    except ValueError:
+        print("ERROR: La cantidad debe ser un número entero.")
+        return
+
+    if cantidad_a_vender <= 0:
+        print("ERROR: La cantidad a vender debe ser mayor que cero.")
+        return
+        
+    # 3. Validar Stock (Control de Excepción de Negocio)
+    if cantidad_a_vender > item_a_vender.cantidad:
+        print(f"\nVENTA FALLIDA: Solo hay {item_a_vender.cantidad} unidades disponibles.")
+        print("No se puede vender más de lo que hay en stock.")
+        return
+        
+    # 4. Actualizar Stock
+    item_a_vender.cantidad -= cantidad_a_vender
+    
+    # Calcular el ingreso para que el Integrante 2 pueda usarlo
+    ingreso_venta = cantidad_a_vender * item_a_vender.precio
+    
+    # *** Aquí llamar a la función de registrar venta ***
+    
+    print(f"\n✓ Venta exitosa: {cantidad_a_vender} unidades de '{item_a_vender.nombre}' vendidas.")
+    print(f"Stock restante: {item_a_vender.cantidad} unidades.")
+    print(f"Ingreso generado: ${ingreso_venta:.2f}")
 
 #Función por Karev: limpiar pantalla
 def clear():
@@ -222,6 +275,7 @@ def Main():
               \n5. Borrar\
               \n6. Buscar por nombre\
               \n7. Rubros\
+              \n8. Ventas\
               \n0. Salir")
         
         try:
@@ -257,6 +311,8 @@ def Main():
 
                 case 7:
                     Rubros_menu()
+                case 8:
+                    vender_producto()
                 case 0:
                     print("-----> SALIENDO <-----")
 
