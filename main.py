@@ -4,7 +4,7 @@
 
 import os
 from datetime import datetime, timedelta
-from modelos import Item, productos
+from modelos import Item, productos, venta, ventas, agregar_venta
 from Rubros import Rubros_menu
 
 # Función por Pedro
@@ -201,7 +201,7 @@ def ordenar():
     print("=====/ LISTA DE PRODUCTOS (ordenados) \\=====")
     for p in productosOrd: print(p)
 
-#Funcion Nicio
+#Funcion Nicio / Refactorizada por Alexis para multiples ventas 
 def vender_producto():
     print("\n=====/ SIMULACIÓN DE VENTA \\=====")
     
@@ -209,51 +209,120 @@ def vender_producto():
         print("ERROR: No hay productos en stock para vender.")
         return
 
-    try:
-        # 1. Pedir ID del producto
-        id_venta = int(input("Ingrese el ID del producto a vender: "))
-    except ValueError:
-        print("ERROR: El ID debe ser un número entero.")
-        return
-
-    # Buscar el producto
-    item_a_vender = buscar(id_venta)
+    # Diccionario para acumular productos a vender {id_producto: cantidad}
+    items_vendidos = {}
     
-    if not item_a_vender:
-        print(f"ERROR: No se encontró un producto con ID {id_venta}.")
-        return
+    while True:
+        print("\n--- Nueva línea de venta ---")
+        try:
+            # 1. Pedir ID del producto
+            id_venta = int(input("Ingrese el ID del producto a vender (0 para finalizar): "))
+        except ValueError:
+            print("ERROR: El ID debe ser un número entero.")
+            continue
 
-    # Mostrar stock actual y pedir cantidad
-    print(f"\nProducto: {item_a_vender.nombre} | Stock actual: {item_a_vender.cantidad}")
-    
-    try:
-        # 2. Pedir Cantidad a vender
-        cantidad_a_vender = int(input("Ingrese la cantidad a vender: "))
-    except ValueError:
-        print("ERROR: La cantidad debe ser un número entero.")
-        return
+        # Salir del ciclo si se ingresa 0
+        if id_venta == 0:
+            break
 
-    if cantidad_a_vender <= 0:
-        print("ERROR: La cantidad a vender debe ser mayor que cero.")
-        return
+        # Buscar el producto
+        item_a_vender = buscar(id_venta)
         
-    # 3. Validar Stock (Control de Excepción de Negocio)
-    if cantidad_a_vender > item_a_vender.cantidad:
-        print(f"\nVENTA FALLIDA: Solo hay {item_a_vender.cantidad} unidades disponibles.")
-        print("No se puede vender más de lo que hay en stock.")
-        return
+        if not item_a_vender:
+            print(f"ERROR: No se encontró un producto con ID {id_venta}.")
+            continue
+
+        # Mostrar stock actual y pedir cantidad
+        print(f"\nProducto: {item_a_vender.nombre} | Stock actual: {item_a_vender.cantidad}")
         
-    # 4. Actualizar Stock
-    item_a_vender.cantidad -= cantidad_a_vender
+        try:
+            # 2. Pedir Cantidad a vender
+            cantidad_a_vender = int(input("Ingrese la cantidad a vender: "))
+        except ValueError:
+            print("ERROR: La cantidad debe ser un número entero.")
+            continue
+
+        if cantidad_a_vender <= 0:
+            print("ERROR: La cantidad a vender debe ser mayor que cero.")
+            continue
+            
+        # 3. Validar Stock (Control de Excepción de Negocio)
+        # Considerar productos ya agregados en esta misma venta
+        cantidad_ya_vendida = items_vendidos.get(id_venta, 0)
+        if cantidad_a_vender + cantidad_ya_vendida > item_a_vender.cantidad:
+            print(f"\nVENTA FALLIDA: Solo hay {item_a_vender.cantidad - cantidad_ya_vendida} unidades disponibles.")
+            print("No se puede vender más de lo que hay en stock.")
+            continue
+            
+        # 4. Agregar al diccionario de items vendidos
+        items_vendidos[id_venta] = items_vendidos.get(id_venta, 0) + cantidad_a_vender
+        
+        print(f"\n✓ Producto agregado: {cantidad_a_vender} unidades de '{item_a_vender.nombre}'")
+        print(f"Total acumulado para este producto: {items_vendidos[id_venta]} unidades")
+
+    # Verificar si se agregaron productos
+    if not items_vendidos:
+        print("\nNo se agregaron productos a la venta.")
+        return
+
+    # 5. Procesar la venta completa
+    print("\n" + "="*50)
+    print("PROCESANDO VENTA...")
+    print("="*50)
     
-    # Calcular el ingreso para que el Integrante 2 pueda usarlo
-    ingreso_venta = cantidad_a_vender * item_a_vender.precio
+    # Diccionario para el objeto venta (con objetos Item como clave)
+    items_venta_obj = {}
+    ingreso_total = 0
     
+    for id_producto, cantidad_total in items_vendidos.items():
+        item = buscar(id_producto)
+        if item:
+            # Actualizar Stock
+            item.cantidad -= cantidad_total
+            
+            # Calcular el ingreso para este producto
+            ingreso_producto = cantidad_total * item.precio
+            ingreso_total += ingreso_producto
+            
+            # Agregar al diccionario del objeto venta
+            items_venta_obj[item] = cantidad_total
+            
+            print(f"\n✓ {cantidad_total} unidades de '{item.nombre}' vendidas.")
+            print(f"  Stock restante: {item.cantidad} unidades.")
+            print(f"  Ingreso parcial: ${ingreso_producto:.2f}")
+
     # *** Aquí llamar a la función de registrar venta ***
+    # Crear objeto venta
+    id_nueva_venta = len(ventas) + 1 if ventas else 1
+    nueva_venta = venta(id_nueva_venta, items_venta_obj)
+    agregar_venta(nueva_venta)
     
-    print(f"\n✓ Venta exitosa: {cantidad_a_vender} unidades de '{item_a_vender.nombre}' vendidas.")
-    print(f"Stock restante: {item_a_vender.cantidad} unidades.")
-    print(f"Ingreso generado: ${ingreso_venta:.2f}")
+    print(f"\n" + "="*50)
+    print(f"VENTA FINALIZADA EXITOSAMENTE")
+    print(f"Total de productos vendidos: {len(items_vendidos)}")
+    print(f"Ingreso total generado: ${ingreso_total:.2f}")
+    print(f"ID de venta: {id_nueva_venta}")
+
+def reportes_ventas(): #Funcion por marco
+    total_ingresos=0
+    print("\n=====/ REPORTES DE VENTAS \\=====")
+    
+    if not ventas:
+        print("No se han registrado ventas aún.")
+        return
+    print(f"\nTotal de ventas registradas: {len(ventas)}")
+
+    for v in ventas:
+        print(f"\n--- Venta ID: {v.id_venta} ---")
+        subtotales = v.obtenerSubtotales()
+        total_venta = v.obtener_total()
+        total_ingresos += total_venta
+        for item, cantidad in v.items_vendidos.items():
+            subtotal = subtotales[item]
+            print(f"Producto: {item.nombre} | Cantidad: {cantidad} | Subtotal: ${subtotal:.2f}")
+        
+        print(f"Total de la venta: ${total_venta:.2f}")
+    print(f"\nINGRESOS TOTALES DE TODAS LAS VENTAS: ${total_ingresos:.2f}")
 
 #Función por Karev: limpiar pantalla
 def clear():
@@ -276,6 +345,7 @@ def Main():
               \n6. Buscar por nombre\
               \n7. Rubros\
               \n8. Ventas\
+              \n9. Reportes de Ventas\
               \n0. Salir")
         
         try:
@@ -313,6 +383,8 @@ def Main():
                     Rubros_menu()
                 case 8:
                     vender_producto()
+                case 9:
+                    reportes_ventas()
                 case 0:
                     print("-----> SALIENDO <-----")
 
