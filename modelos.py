@@ -43,5 +43,3 @@ ventas = []
 def agregar_venta(venta_nueva: venta):
     ventas.append(venta_nueva)
 
-def obtener_ventas():
-    return ventas

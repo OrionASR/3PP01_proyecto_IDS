@@ -303,6 +303,27 @@ def vender_producto():
     print(f"Ingreso total generado: ${ingreso_total:.2f}")
     print(f"ID de venta: {id_nueva_venta}")
 
+def reportes_ventas(): #Funcion por marco
+    total_ingresos=0
+    print("\n=====/ REPORTES DE VENTAS \\=====")
+    
+    if not ventas:
+        print("No se han registrado ventas aún.")
+        return
+    print(f"\nTotal de ventas registradas: {len(ventas)}")
+
+    for v in ventas:
+        print(f"\n--- Venta ID: {v.id_venta} ---")
+        subtotales = v.obtenerSubtotales()
+        total_venta = v.obtener_total()
+        total_ingresos += total_venta
+        for item, cantidad in v.items_vendidos.items():
+            subtotal = subtotales[item]
+            print(f"Producto: {item.nombre} | Cantidad: {cantidad} | Subtotal: ${subtotal:.2f}")
+        
+        print(f"Total de la venta: ${total_venta:.2f}")
+    print(f"\nINGRESOS TOTALES DE TODAS LAS VENTAS: ${total_ingresos:.2f}")
+
 #Función por Karev: limpiar pantalla
 def clear():
     return os.system("cls" if os.name == "nt" else "clear")
@@ -324,6 +345,7 @@ def Main():
               \n6. Buscar por nombre\
               \n7. Rubros\
               \n8. Ventas\
+              \n9. Reportes de Ventas\
               \n0. Salir")
         
         try:
@@ -361,6 +383,8 @@ def Main():
                     Rubros_menu()
                 case 8:
                     vender_producto()
+                case 9:
+                    reportes_ventas()
                 case 0:
                     print("-----> SALIENDO <-----")
 
