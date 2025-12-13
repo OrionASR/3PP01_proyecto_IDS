@@ -1,4 +1,4 @@
-# 3PP01_proyecto_IDS: 📦 Sistema de Gestión de Inventario 📦
+# 3PP01_proyecto_IDS: 📦 Sistema de Gestión de Inventario 📦 <3
 ## (versión 1.30)
 
 Un sistema de consola desarrollado en Python para gestionar el inventario de una tienda. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Borrar) sobre productos, incluyendo validaciones de fechas y ordenamiento.
