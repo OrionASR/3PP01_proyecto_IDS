@@ -1,0 +1,51 @@
+{
+    "store": {
+        "name": "Mi Tienda",
+        "location": "Calle Principal 123, Ciudad",
+        "products": [
+            {
+                "id": 1,
+                "name": "Camiseta",
+                "category": "Ropa",
+                "price": 19.99,
+                "stock": 100
+            },
+            {
+                "id": 2,
+                "name": "Pantalones",
+                "category": "Ropa",
+                "price": 39.99,
+                "stock": 50
+            },
+            {
+                "id": 3,
+                "name": "Zapatos",
+                "category": "Calzado",
+                "price": 59.99,
+                "stock": 30
+            },
+            {
+                "id": 4,
+                "name": "Reloj",
+                "category": "Accesorios",
+                "price": 89.99,
+                "stock": 20
+            }
+        ],
+        "employees": [
+            {
+                "id": 1,
+                "name": "Juan Pérez",
+                "position": "Gerente",
+                "salary": 3000
+            },
+            {
+                "id": 2,
+                "name": "Ana Gómez",
+                "position": "Vendedora",
+                "salary": 2000
+            }
+        ],
+        "sales": []
+    }
+}
