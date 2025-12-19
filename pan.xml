@@ -1,0 +1,14 @@
+<pan>
+    <ingredients>
+        <ingredient>Flour</ingredient>
+        <ingredient>Water</ingredient>
+        <ingredient>Yeast</ingredient>
+        <ingredient>Salt</ingredient>
+    </ingredients>
+    <bakingInstructions>
+        <step>Mix all ingredients together.</step>
+        <step>Knead the dough for 10 minutes.</step>
+        <step>Let the dough rise for 1 hour.</step>
+        <step>Bake in a preheated oven at 220°C for 30 minutes.</step>
+    </bakingInstructions>
+</pan>
