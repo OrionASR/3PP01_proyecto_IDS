@@ -14,11 +14,10 @@ class Item:
                 \n | Precio: {self.precio} | Lote y fecha de caducidad: {self.lote}, {self.fechaCad}\
                 \n | Stock disponible: {self.cantidad} |\n | "
 
-# Lista de productos
 productos = []
 
 #Desarrollado por Marco Ortega
-class venta:
+class Venta:
     def __init__(self, id_venta: int, items_vendidos: dict):
        
         self.id_venta = id_venta
@@ -40,6 +39,6 @@ class venta:
 ventas = []
 
 #Funciones para interactuar con la listas de ventas
-def agregar_venta(venta_nueva: venta):
+def agregar_venta(venta_nueva: Venta):
     ventas.append(venta_nueva)
 

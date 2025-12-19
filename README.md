@@ -19,6 +19,7 @@ El sistema cuenta *(por ahora)* con las siguientes funcionalidades:
 * **Venta:**  Se simula el consumo del stock.
 * **Reporte de ventas:** Se visualiza detalladamente todas las ventas realizadas. 
 * **Kcarlos moment:** kcarlos se une al equipo por desision de la catedra. 
+* **Expansión de dominio:** Ahora el proyecto expandió su capacidad lingüística, pudiendo almacenar información en múltiples lenguajes de programación
 * **
 * ***Persistencia:*** Los datos se mantienen en memoria durante la ejecución (Listas y Objetos).
 

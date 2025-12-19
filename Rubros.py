@@ -4,23 +4,28 @@
 
 import os
 from modelos import Item, productos
+from readchar import readkey, key
 
 
 # ---------------------------
 # FUNCIONES BÁSICAS
 # ---------------------------
+
 def clear():
-    os.system("cls" if os.name == "nt" else "clear")
+    return os.system("cls" if os.name == "nt" else "clear")
 
 def pausa():
-    input("\nPresiona ENTER para continuar...")
+    while True:
+        clear()
+        print("Presiona 'Enter' para continuar...", end="")
+        tecla = readkey()
+        if tecla == key.ENTER: break
 
 
 # ===========================
 #   2.1 FILTRADO
 # ===========================
 
-# -------- LEONEL: FILTRAR POR PRECIO --------
 def filtrar_por_precio():
     clear()
     print("=== FILTRAR POR PRECIO (LEONEL) ===")
@@ -40,8 +45,6 @@ def filtrar_por_precio():
 
     pausa()
 
-
-# -------- SIMMEL: FILTRAR POR ID --------
 def filtrar_por_id():
     clear()
     print("=== FILTRAR POR ID ===")
@@ -66,9 +69,6 @@ def filtrar_por_id():
 
     pausa()
 
-
-# -------- OMAR: FILTRAR POR FECHA --------
-# Formato esperado: DD/MM/AAAA
 def filtrar_por_fecha():
     clear()
     print("=== FILTRAR POR FECHA (OMAR) ===")
@@ -86,7 +86,6 @@ def filtrar_por_fecha():
     pausa()
 
 
-# -------- SIMMEL: MENÚ FILTRADO --------
 def filtrado_menu():
     opcion = -1
     while opcion != 0:
@@ -99,26 +98,34 @@ def filtrado_menu():
 
         try:
             opcion = int(input("\n--> "))
+
         except:
             opcion = -1
 
-        if opcion == 1:
-            filtrar_por_precio()
-        elif opcion == 2:
-            filtrar_por_id()
-        elif opcion == 3:
-            filtrar_por_fecha()
-        elif opcion == 0:
-            return
         else:
-            print("Opción inválida.")
-            pausa()
+            match opcion:
+                case 1:
+                    filtrar_por_id()
+                
+                case 2:
+                    filtrar_por_precio()
+                
+                case 3:
+                    filtrar_por_fecha()
+                
+                case 0:
+                    clear()
+                    print("Saliendo del sub-módulo 'Filtrar'...")
+                    pausa()
+                
+                case _:
+                    clear()
+                    print("Opción no disponible o desconocida.")
 
 
 # ===========================
 #   2.2 ORDENAR (JUAN ISAAC, YULIX, SANCHEZ)
 # ===========================
-#  ORDENAR POR ID sanchez
 def ordenar_por_id():
     productos.sort(key=lambda p: p.id)
     print("\nProductos ordenados por ID:\n")
@@ -131,7 +138,6 @@ def ordenar_por_fecha():
     print("\nProductos ordenados por Fecha:\n")
     for p in productos: print(p)
 
-#  ORDENAR POR ID YULIX
 def ordenar_por_precio():
     productos.sort(key=lambda p: p.precio)
     print("\nProductos ordenados por Precio:\n")
@@ -154,18 +160,27 @@ def ordenar_menu():
         except:
             opcion = -1
 
-        clear()
-
-        if opcion == 1:
-            ordenar_por_id()
-        elif opcion == 2:
-            ordenar_por_fecha()
-        elif opcion == 3:
-            ordenar_por_precio()
-        elif opcion == 0:
-            return
         else:
-            print("Opción inválida.")
+            clear()
+
+            match opcion:
+                case 1:
+                    ordenar_por_id()
+                
+                case 2:
+                    ordenar_por_precio()
+                
+                case 3:
+                    ordenar_por_fecha()
+                
+                case 0:
+                    clear()
+                    print("Saliendo del sub-módulo 'Ordenar'...")
+                    pausa()
+                
+                case _:
+                    clear()
+                    print("Opción no disponible o desconocida.")
 
         pausa()
 
@@ -239,48 +254,64 @@ def borrar_menu():
         except:
             opcion = -1
 
-        if opcion == 1:
-            borrar_por_id()
-        elif opcion == 2:
-            borrar_por_precio()
-        elif opcion == 3:
-            borrar_por_fecha()
-        elif opcion == 0:
-            return
         else:
-            print("Opción inválida.")
-            pausa()
+            match opcion:
+                case 1:
+                    borrar_por_id()
+                
+                case 2:
+                    borrar_por_precio()
+                
+                case 3:
+                    borrar_por_fecha()
+                
+                case 0:
+                    clear()
+                    print("Saliendo del sub-módulo 'Borrar'...")
+                    pausa()
+                
+                case _:
+                    clear()
+                    print("Opción no disponible o desconocida.")
 
 
 # ===========================
 #   MENÚ PRINCIPAL RUBROS (SIMMEL)
 # ===========================
+
 def Rubros_menu():
     opcion = -1
-    while opcion != 0:
+
+    while True:
         clear()
         print("===== RUBROS =====")
-        print("1. Filtrado")
-        print("2. Ordenar (Fafa)")
-        print("3. Borrar")
-        print("0. Salir")
+        print("1. Filtrar productos\
+              \n2. Ordenar productos\
+              \n3. Borrar productos")
 
         try:
             opcion = int(input("\n--> "))
+
         except:
             opcion = -1
 
-        if opcion == 1:
-            filtrado_menu()
-        elif opcion == 2:
-            ordenar_menu()
-        elif opcion == 3:
-            borrar_menu()
-        elif opcion == 0:
-            clear()
-            print("Saliendo de Rubros...")
-            pausa()
-            return
         else:
-            print("Opción inválida.")
-            pausa()
+            match opcion:
+                case 1:
+                    filtrado_menu()
+                
+                case 2:
+                    ordenar_menu()
+                
+                case 3:
+                    borrar_menu()
+                
+                case 0:
+                    clear()
+                    print("     Saliendo del módulo 'Rubros'...")
+                    pausa()
+                    break
+                    
+                case _:
+                    clear()
+                    print("Opción no disponible o desconocida.")

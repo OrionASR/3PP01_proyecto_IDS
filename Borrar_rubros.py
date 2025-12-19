@@ -1,20 +1,16 @@
+# y la parte 1?
+
 # ---------- Parte 2: Lógica de borrado / manipulación de datos ----------
-# --- Responsable: fernanda ---
 
 def borrar_por_rubro_logic(productos, opcion, valor_str):
-    """
-    Recibe la lista 'productos', la opción elegida, y el valor ingresado (string).
-    Devuelve el número de elementos borrados.
-    """
     antes = len(productos)
 
     if opcion == "1":
-        # Borrar por ID (suponemos que p.id es comparable como str o int)
+        # Borrar por ID
         productos[:] = [p for p in productos if str(p.id) != valor_str]
 
     elif opcion == "2":
         # Borrar por fecha de caducidad
-        # (asume que p.fecha_caducidad es string "AAAA-MM-DD" o date; se compara como str)
         productos[:] = [p for p in productos if str(p.fecha_caducidad) != valor_str]
 
     elif opcion == "3":
@@ -31,7 +27,6 @@ def borrar_por_rubro_logic(productos, opcion, valor_str):
 
 
 # ---------- Parte 3: Datos, estructura y utilidades generales ----------
-# --- Responsable: ulloa ---
 
 from dataclasses import dataclass
 
@@ -39,14 +34,9 @@ from dataclasses import dataclass
 class Producto:
     id: int
     nombre: str
-    fecha_caducidad: str # idealmente 'YYYY-MM-DD' o datetime.date
+    fecha_caducidad: str
     precio: float
-    # puedes añadir más campos si lo necesitas
 
 def clear():
-    """
-    Limpia la consola para mejorar la experiencia de usuario.
-    Puedes adaptar esto a tu SO (cls o clear).
-    """
     import os
     os.system('cls' if os.name == 'nt' else 'clear')
