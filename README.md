@@ -1,5 +1,5 @@
 # 3PP01_proyecto_IDS: 📦 Sistema de Gestión de Inventario 📦 <3
-## (versión 1.999)
+## (versión 2.2)
 
 Un sistema de consola desarrollado en Python para gestionar el inventario de una tienda. Permite realizar operaciones CRUD (Crear, Leer, Actualizar, Borrar) sobre productos, incluyendo validaciones de fechas y ordenamiento.
 
@@ -24,5 +24,11 @@ El sistema cuenta *(por ahora)* con las siguientes funcionalidades:
 * ***Persistencia:*** Los datos se mantienen en memoria durante la ejecución (Listas y Objetos).
 
 ## 🛠️ Requisitos
+* Node.js y npm instalados
 * Python **3.0** en adelante
+* JDK versión **Eclipste Temurin 21**
+* IntelliJ IDEA *(Community Edition si no tienes dinero)* **2025.3.1**
+* XAMPP **v23.4**
+* gcc **21.2.0.2**
+* MySQL Workbench **8.0.4 build 5549652 CD (64 bits)**
 * **No** requiere librerías externas (usa módulos nativos `os` y `datetime`).
